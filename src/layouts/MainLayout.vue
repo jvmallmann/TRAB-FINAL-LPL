@@ -5,13 +5,13 @@
     <q-header elevated :class="$q.dark.isActive ? 'bg-primary' : 'bg-primary'">
       <q-toolbar>
         <q-btn flat @click="toggleDrawer" round dense icon="menu" />
-        <q-toolbar-title>Dashboard</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
     <!-- Menu lateral -->
     <q-drawer
       v-model="drawer"
+      style="background-color: #285430;"
       show-if-above
       :mini="miniState"
       @mouseenter="miniState = false"
@@ -20,73 +20,92 @@
       :width="200"
       :breakpoint="500"
       bordered
-      :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
+      class="custom-drawer"
     >
       <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list padding>
-          <q-item clickable v-ripple tag="router-link" to="/pacientes">
+          <q-item
+            clickable
+            v-ripple
+            tag="router-link"
+            to="/dashboard"
+            @click="closeDrawer"
+          >
+            <q-item-section avatar>
+              <q-icon name="dashboard" />
+            </q-item-section>
+            <q-item-section v-if="!miniState">Dashboard</q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            tag="router-link"
+            to="/pacientes"
+            @click="closeDrawer"
+          >
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
-            <q-item-section v-if="!miniState">
-              Pacientes
-            </q-item-section>
+            <q-item-section v-if="!miniState">Pacientes</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple tag="router-link" to="/medicos">
+          <q-item
+            clickable
+            v-ripple
+            tag="router-link"
+            to="/medicos"
+            @click="closeDrawer"
+          >
             <q-item-section avatar>
               <q-icon name="local_hospital" />
             </q-item-section>
-            <q-item-section v-if="!miniState">
-              Médicos
-            </q-item-section>
+            <q-item-section v-if="!miniState">Médicos</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple tag="router-link" to="/enfermarias">
-            <q-item-section avatar>
-              <q-icon name="meeting_room" />
-            </q-item-section>
-            <q-item-section v-if="!miniState">
-              Enfermarias
-            </q-item-section>
-          </q-item>
 
-          <q-item clickable v-ripple tag="router-link" to="/equipamentos">
-            <q-item-section avatar>
-              <q-icon name="build" />
-            </q-item-section>
-            <q-item-section v-if="!miniState">
-              Equipamentos
-            </q-item-section>
-          </q-item>
+          <!-- Outros itens do menu... -->
         </q-list>
       </q-scroll-area>
     </q-drawer>
 
     <!-- Conteúdo principal -->
     <q-page-container>
-      <q-page padding>
-        <router-view />
-      </q-page>
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 const drawer = ref(true);
 const miniState = ref(true);
+const router = useRouter();
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
+
+const closeDrawer = () => {
+  drawer.value = false;
+};
+
+// Verifica mudanças na rota para resetar o drawer corretamente em cada página
+watch(
+  () => router.currentRoute.value.path,
+  () => {
+    drawer.value = true;
+    miniState.value = true;
+  }
+);
 </script>
 
 <style scoped>
 .custom-drawer {
   background-color: #285430;
-  color: #285430;
+  color: #ffffff;
   width: 250px;
 }
 
@@ -95,7 +114,7 @@ const toggleDrawer = () => {
 }
 
 .q-drawer a {
-  color: #285430;
+  color: #ffffff;
 }
 
 .q-drawer a:hover {
@@ -103,10 +122,10 @@ const toggleDrawer = () => {
 }
 
 .q-item-section {
-  color: #FFBB56; /* Garante que o texto do menu seja branco */
+  color: #FFBB56;
 }
 
 .q-item-section:hover {
-  color: #d4d4d4; /* Cor ao passar o mouse */
+  color: #ab1717;
 }
 </style>

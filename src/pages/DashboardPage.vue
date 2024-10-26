@@ -18,7 +18,7 @@
                 <div class="text-h6 card-title">Pacientes</div>
                 <q-separator class="q-mb-md" />
                 <div v-if="pacientes.length > 0">
-                  <q-item-label v-for="paciente in pacientes" :key="paciente.id">
+                  <q-item-label v-for="paciente in pacientes" :key="paciente.PacienteID">
                     {{ paciente.PacienteNome || 'Nome não disponível' }}
                   </q-item-label>
                 </div>

@@ -1,27 +1,24 @@
+// src/router/routes.js
 const routes = [
   {
-    path: "/",
-    component: () => import("layouts/MainLayout.vue"),
+    path: '/login',
+    component: () => import('src/layouts/AuthLayout.vue'), // Layout sem cabeçalho e menu
     children: [
-      {
-        path: "", // Página inicial
-        component: () => import("pages/DashboardPage.vue"),
-      },
-      {
-        path: "login", // Rota de login
-        component: () => import("pages/LoginPage.vue"),
-      },
-      {
-        path: "register", // Rota de registro
-        component: () => import("pages/RegisterPage.vue"),
-      },
+      { path: '', component: () => import('src/pages/LoginPage.vue') }, // Página de Login
     ],
   },
-
-  // Rota para páginas não encontradas
   {
-    path: "/:catchAll(.*)*",
-    component: () => import("pages/ErrorNotFound.vue"),
+    path: '/',
+    component: () => import('src/layouts/MainLayout.vue'), // Layout com cabeçalho e menu
+    children: [
+      { path: '', redirect: '/dashboard' }, // Redireciona para o dashboard
+      { path: 'dashboard', component: () => import('src/pages/DashboardPage.vue') }, // Página de Dashboard
+      { path: 'pacientes', component: () => import('src/pages/PacientesPage.vue') }, // Página de Pacientes
+    ],
+  },
+  {
+    path: '/:catchAll(.*)*',
+    component: () => import('src/pages/ErrorNotFound.vue'), // Página de erro 404
   },
 ];
 

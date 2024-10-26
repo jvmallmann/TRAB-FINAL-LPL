@@ -1,19 +1,22 @@
 <!-- src/layouts/AuthLayout.vue -->
 <template>
-    <q-layout view="hHh lpR fFf">
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </q-layout>
-  </template>
-  
-  <script>
-  export default {
-    name: 'AuthLayout'
-  };
-  </script>
-  
-  <style scoped>
-  /* Adicione qualquer estilo que precisar aqui */
-  </style>
-  
+  <q-layout view="lHh Lpr lFf">
+    <q-page-container>
+      <router-view /> <!-- Renderiza LoginPage.vue aqui -->
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script setup>
+// Não é necessário script específico aqui
+</script>
+
+<style scoped>
+/* Estilos opcionais para o layout de autenticação */
+.q-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+</style>
