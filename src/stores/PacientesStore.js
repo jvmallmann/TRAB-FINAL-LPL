@@ -21,5 +21,35 @@ export const usePacientesStore = defineStore('pacientes', {
         this.loading = false;
       }
     },
-  },
+
+    async fetchPacienteById(id) {
+      try {
+        const paciente = await pacientesService.getPacienteById(id);
+        return paciente;
+      } catch (error) {
+        console.error("Erro ao buscar paciente:", error);
+        throw error;
+      }
+    },
+
+    async updatePaciente(id, pacienteData) {
+      try {
+        await pacientesService.updatePaciente(id, pacienteData);
+        this.fetchPacientes();
+      } catch (error) {
+        console.error("Erro ao atualizar paciente:", error);
+        throw error;
+      }
+    },
+
+    async addPaciente(pacienteData) {
+      try {
+        await pacientesService.addPaciente(pacienteData);
+        this.fetchPacientes();
+      } catch (error) {
+        console.error("Erro ao adicionar paciente:", error);
+        throw error;
+      }
+    }
+  }
 });

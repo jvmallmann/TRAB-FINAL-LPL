@@ -1,14 +1,41 @@
 // src/services/pacientesService.js
-import { api } from 'src/boot/axios'; // Certifique-se de que o axios está configurado
+import { api } from 'src/boot/axios';
 
 const pacientesService = {
-  // Função para buscar os dados dos pacientes
   async getPacientes() {
     try {
-      const response = await api.get('/pacientes'); // Chama a rota da API para pacientes
-      return response.data; // Retorna os dados de pacientes recebidos da API
+      const response = await api.get('/pacientes');
+      return response.data;
     } catch (error) {
       console.error("Erro ao carregar dados dos pacientes:", error);
+      throw error;
+    }
+  },
+
+  async getPacienteById(id) {
+    try {
+      const response = await api.get(`/pacientes/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao carregar paciente:", error);
+      throw error;
+    }
+  },
+
+  async updatePaciente(id, pacienteData) {
+    try {
+      await api.put(`/pacientes/${id}`, pacienteData);
+    } catch (error) {
+      console.error("Erro ao atualizar paciente:", error);
+      throw error;
+    }
+  },
+
+  async addPaciente(pacienteData) {
+    try {
+      await api.post('/pacientes', pacienteData);
+    } catch (error) {
+      console.error("Erro ao adicionar paciente:", error);
       throw error;
     }
   }
