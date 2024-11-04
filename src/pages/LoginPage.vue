@@ -1,6 +1,6 @@
 <template>
   <q-page class="login-page">
-    <q-card flat bordered class="login-card">
+    <q-card bordered class="login-card">
       <!-- Logo e Título -->
       <q-card-section class="text-center">
         <img src="/src/assets/LOGO.png" alt="Logo" class="logo" />
@@ -90,7 +90,7 @@ const handleLogin = async () => {
   padding: 10px;
   background-color: #285430;
   border-radius: 35px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 12px 12px 8px rgba(0, 0, 0, 0.3); /* Sombra */
 }
 
 .q-form {
