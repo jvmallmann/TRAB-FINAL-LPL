@@ -32,10 +32,21 @@
           </div>
           <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </q-form>
+
+        <!-- Botão de registro -->
+        <div class="button-container register-button">
+          <q-btn
+            flat
+            label="Registrar Usuário"
+            @click="goToRegister"
+            class="login-btn"
+          />
+        </div>
       </q-card-section>
     </q-card>
   </q-page>
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
@@ -49,7 +60,7 @@ const router = useRouter();
 
 const handleLogin = async () => {
   try {
-    // Faz uma chamada para o JSON Server para buscar todos os usuários
+    // Faz a chamada para o JSON Server para buscar todos os usuários
     const response = await axios.get('http://localhost:3000/usuarios');
     const users = response.data;
 
@@ -59,8 +70,11 @@ const handleLogin = async () => {
     );
 
     if (user) {
-      // Armazena o nome do usuário logado para exibir no menu lateral
+      // Salva o nome e a permissão no localStorage
       localStorage.setItem('loggedInUserName', user.Name);
+      localStorage.setItem('loggedInUserPermission', user.Permissao);
+
+      console.log('Permissão salva:', user.Permissao); // Debug para verificar
 
       // Redireciona para o dashboard
       router.push('/dashboard');

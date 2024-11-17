@@ -1,28 +1,59 @@
-// src/router/routes.js
 const routes = [
   {
     path: '/login',
-    component: () => import('src/layouts/AuthLayout.vue'), // Layout sem cabeçalho e menu
+    component: () => import('src/layouts/AuthLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/LoginPage.vue') }, // Página de Login
+      { path: '', component: () => import('src/pages/login/LoginPage.vue') },
     ],
   },
   {
     path: '/',
-    component: () => import('src/layouts/MainLayout.vue'), // Layout com cabeçalho e menu
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', redirect: '/dashboard' }, // Redireciona para o dashboard
-      { path: 'dashboard', component: () => import('src/pages/DashboardPage.vue') }, // Página de Dashboard
+      { path: '', redirect: '/dashboard' },
+      { path: 'dashboard', component: () => import('src/pages/DashboardPage.vue') },
 
       // Rotas de Pacientes
-      { path: 'pacientes', component: () => import('src/pages/pacientes/PacientesPage.vue') }, // Lista de Pacientes
-      { path: 'pacientes/novo', component: () => import('src/pages/pacientes/NovoPacientePage.vue') }, // Formulário para Novo Paciente
-      { path: 'pacientes/edit/:id', component: () => import('src/pages/pacientes/NovoPacientePage.vue'), props: true }, // Edição de Paciente
+      { path: 'pacientes', component: () => import('src/pages/pacientes/PacientesPage.vue') },
+      { path: 'pacientes/novo', component: () => import('src/pages/pacientes/NovoPacientePage.vue') },
+      { path: 'pacientes/edit/:id', component: () => import('src/pages/pacientes/NovoPacientePage.vue'), props: true },
 
       // Rotas de Médicos
-      { path: 'medicos', component: () => import('src/pages/medicos/MedicosPage.vue') }, // Lista de Médicos
-      { path: 'medicos/novo', component: () => import('src/pages/medicos/NovoMedicoPage.vue') }, // Formulário para Novo Médico
-      { path: 'medicos/edit/:id', component: () => import('src/pages/medicos/NovoMedicoPage.vue'), props: true }, // Edição de Médico
+      { path: 'medicos', component: () => import('src/pages/medicos/MedicosPage.vue') },
+      { path: 'medicos/novo', component: () => import('src/pages/medicos/NovoMedicoPage.vue') },
+      { path: 'medicos/edit/:id', component: () => import('src/pages/medicos/NovoMedicoPage.vue'), props: true },
+
+      // Rotas protegidas para Gerenciamento de Usuários
+      {
+        path: 'usuarios',
+        component: () => import('src/pages/usuarios/GerenciarUsuariosPage.vue'),
+        beforeEnter: (to, from, next) => {
+          const Permissao = localStorage.getItem('loggedInUserPermission');
+          if (Permissao === 'adm') {
+            next();
+          } else {
+            next('/access-denied'); // Redireciona para a página de acesso negado
+          }
+        },
+      },
+      {
+        path: 'usuarios/novo',
+        component: () => import('src/pages/usuarios/NovoUsuarioPage.vue'),
+        beforeEnter: (to, from, next) => {
+          const Permissao = localStorage.getItem('loggedInUserPermission');
+          if (Permissao === 'adm') {
+            next();
+          } else {
+            next('/access-denied'); // Redireciona para a página de acesso negado
+          }
+        },
+      },
+
+      // Página de acesso negado
+      {
+        path: 'access-denied',
+        component: () => import('src/pages/AcessoNegadoPage.vue'),
+      },
     ],
   },
   {
