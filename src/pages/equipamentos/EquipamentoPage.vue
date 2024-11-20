@@ -1,37 +1,37 @@
 <template>
   <q-page>
-    <q-card class="medicos-card">
-
+    <q-card class="equipamentos-card">
+      <div class="header-title">Gerenciar Equipamentos</div>
 
       <q-card-section>
-  <div class="q-gutter-sm row items-center justify-between">
-    <q-input
-      outlined
-      dense
-      placeholder="Pesquisar"
-      v-model="search"
-      class="search-input"
-      prefix-icon="search"
-    />
+        <div class="q-gutter-sm row items-center justify-between">
+          <q-input
+            outlined
+            dense
+            placeholder="Pesquisar"
+            v-model="search"
+            class="search-input"
+            prefix-icon="search"
+          />
 
-    <q-btn
-      label="Novo Médico"
-      icon="add"
-      color="primary"
-      class="q-ml-md"
-      @click="addMedico"
-    />
-  </div>
-</q-card-section>
+          <q-btn
+            label="Novo Equipamento"
+            icon="add"
+            color="primary"
+            class="q-ml-md"
+            @click="addEquipamento"
+          />
+        </div>
+      </q-card-section>
 
-       <!-- Tabela de Médicos -->
-        <q-table
-        :rows="filteredMedicos"
+      <!-- Tabela de Equipamentos -->
+      <q-table
+        :rows="filteredEquipamentos"
         :columns="columns"
-        row-key="MedicoID"
+        row-key="id"
         flat
         dense
-        class="medicos-table"
+        class="equipamentos-table"
       >
         <template v-slot:body-cell-actions="props">
           <q-td align="center" style="white-space: nowrap;">
@@ -40,15 +40,7 @@
               color="negative"
               flat
               dense
-              @click="deleteMedico(props.row.MedicoID)"
-            />
-            <q-toggle
-              v-model="props.row.status"
-              color="green"
-              left-label
-              label="Ativo"
-              dense
-              class="q-ml-md"
+              @click="deleteEquipamento(props.row.id)"
             />
             <q-btn
               icon="edit"
@@ -56,7 +48,7 @@
               flat
               dense
               class="q-ml-md"
-              @click="editMedico(props.row.id)"
+              @click="editEquipamento(props.row.id)"
             />
           </q-td>
         </template>
@@ -67,54 +59,68 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useMedicosStore } from 'src/stores/MedicosStore';
+import { useEquipamentosStore } from 'src/stores/equipamentosStore';
 import { useRouter } from 'vue-router';
 
-const MedicosStore = useMedicosStore();
+const EquipamentosStore = useEquipamentosStore();
 const router = useRouter();
 const search = ref('');
 
 // Definindo as colunas da tabela
 const columns = [
-  { name: 'MedicoNome', label: 'Nome', align: 'left', field: 'MedicoNome' },
-  { name: 'CRM', label: 'CRM', align: 'left', field: 'CRM' },
-  { name: 'MedicoTelefone', label: 'Telefone', align: 'left', field: 'MedicoTelefone' },
-  { name: 'Especialidade', label: 'Especialidade ', align: 'left', field: 'Especialidade' },
-  { name: 'actions', label: 'Ações', align: 'center' }
+  { name: 'Descricao', label: 'Descrição', align: 'left', field: 'Descricao' },
+  { name: 'Fabricante', label: 'Fabricante', align: 'left', field: 'Fabricante' },
+  { name: 'DataCompra', label: 'Data de Compra', align: 'left', field: 'DataCompra' },
+  { name: 'StatusEquipamento', label: 'Status', align: 'center', field: 'StatusEquipamento' },
+  { name: 'actions', label: 'Ações', align: 'center' },
 ];
 
-// Computed para filtrar os médicos com base na pesquisa
-const filteredMedicos = computed(() => {
-  return MedicosStore.medicos.filter((medico) =>
-    medico.MedicoNome.toLowerCase().includes(search.value.toLowerCase())
+// Computed para filtrar os equipamentos com base na pesquisa
+const filteredEquipamentos = computed(() => {
+  return EquipamentosStore.equipamentos.filter((equipamento) =>
+    equipamento.Descricao.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
 onMounted(() => {
-  MedicosStore.fetchMedicos();
+  EquipamentosStore.fetchEquipamentos();
 });
 
-const addMedico = () => {
-  router.push('/medicos/novo');
+const addEquipamento = () => {
+  router.push('/equipamentos/novo');
 };
 
-const editMedico = (medicoID) => {
-  router.push(`/medicos/edit/${medicoID}`);
+const editEquipamento = (equipamentoID) => {
+  router.push(`/equipamentos/edit/${equipamentoID}`);
 };
 
-const deleteMedico = async (medicoID) => {
+const deleteEquipamento = async (equipamentoID) => {
   try {
-    await MedicosStore.deleteMedico(medicoID);
+    await EquipamentosStore.deleteEquipamento(equipamentoID);
   } catch (error) {
-    console.error("Erro ao excluir médico:", error);
+    console.error('Erro ao excluir equipamento:', error);
+  }
+};
+
+// Função para atualizar o status do equipamento
+const updateStatus = async (id, newStatus) => {
+  try {
+    await EquipamentosStore.updateEquipamentoStatus(id, newStatus);
+    console.log(`Status do equipamento ${id} atualizado para ${newStatus}`);
+  } catch (error) {
+    console.error('Erro ao atualizar status do equipamento:', error);
   }
 };
 </script>
 
 <style scoped>
+.header-title {
+  font-size: 1.50rem;
+  margin-top: 5px;
+  margin-left: 10px;
+}
 
-
-.medicos-card {
+.equipamentos-card {
   max-width: 1400px;
   margin: auto;
   margin-top: 20px;
@@ -125,7 +131,7 @@ const deleteMedico = async (medicoID) => {
   max-width: 1080px;
 }
 
-.medicos-table {
+.equipamentos-table {
   min-width: 1080px;
 }
 </style>

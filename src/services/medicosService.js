@@ -1,33 +1,49 @@
-import { api } from 'src/boot/axios'; // Certifique-se de que o axios está configurado
+import { api } from "src/boot/axios";
 
-const medicosService = {
-  // Função para buscar os dados dos pacientes
+export default {
   async getMedicos() {
     try {
-      const response = await api.get('/medicos'); // Chama a rota da API para pacientes
-      return response.data; // Retorna os dados de pacientes recebidos da API
-    } catch (error) {
-      console.error("Erro ao carregar dados dos medicos:", error);
-      throw error;
-    }
-  },
-  async getMedicoById(id) {
-    try {
-      const response = await api.get(`/medicos/${id}`);
+      const response = await api.get("/medicos");
       return response.data;
     } catch (error) {
-      console.error("Erro ao carregar dados do médico:", error);
+      console.error("Erro ao buscar médicos:", error);
       throw error;
     }
   },
 
-    async updateMedico(id, medicoData) {
-      await api.put(`/medicos/${id}`, medicoData);
-    },
-
-    async addMedico(medicoData) {
-      await api.post('/medicos', medicoData);
+  async addMedico(medico) {
+    try {
+      await api.post("/medicos", medico);
+    } catch (error) {
+      console.error("Erro ao adicionar médico:", error);
+      throw error;
     }
-};
+  },
 
-export default medicosService;
+  async updateMedico(id, medicoData) {
+    try {
+      await api.put(`/medicos/${id}`, medicoData);
+    } catch (error) {
+      console.error("Erro ao atualizar médico:", error);
+      throw error;
+    }
+  },
+
+  async deleteMedico(id) {
+    try {
+      await api.delete(`/medicos/${id}`);
+    } catch (error) {
+      console.error("Erro ao deletar médico:", error);
+      throw error;
+    }
+  },
+
+  async updateMedicoStatus(id, status) {
+    try {
+      await api.patch(`/medicos/${id}`, { Status: status });
+    } catch (error) {
+      console.error("Erro ao atualizar status do médico:", error);
+      throw error;
+    }
+  },
+};

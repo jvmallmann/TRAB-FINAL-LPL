@@ -4,10 +4,11 @@ import dashboardService from "src/services/dashboardService";
 export const useDashboardStore = defineStore("dashboardStore", {
   state: () => ({
     medicos: [],
+    enfermeiros: [], // Adicionado enfermeiros
     pacientes: [],
-    // ranking: [],
-    // mostPlayedAgents: [],
-    // mostPlayedMaps: [],
+    equipamentos: [],
+    enfermarias: [],
+    events: [],
     loading: false,
     error: null,
   }),
@@ -17,18 +18,16 @@ export const useDashboardStore = defineStore("dashboardStore", {
       this.loading = true;
       this.error = null;
       try {
-        // Chamando o serviço para buscar os dados
         const data = await dashboardService.getDashboardData();
-        console.log("Dados carregados:", data); // Verifique os dados
-
-        // Atribuindo os dados ao estado
-        this.medicos = data.medicos.slice(0, 3);
-        this.pacientes = data.pacientes.slice(0, 3);
-        // this.ranking = data.ranking;
-        // this.mostPlayedAgents = data.mostPlayedAgents.slice(0, 4);
-        // this.mostPlayedMaps = data.mostPlayedMaps.slice(0, 4);
-      } catch (err) {
-        this.error = "Erro ao carregar dados da Dashboard";
+        this.medicos = data.medicos || [];
+        this.enfermeiros = data.enfermeiros || []; // Atualiza enfermeiros
+        this.pacientes = data.pacientes || [];
+        this.equipamentos = data.equipamentos || [];
+        this.enfermarias = data.enfermarias || [];
+        this.events = data.events || [];
+      } catch (error) {
+        console.error("Erro ao carregar dados da Dashboard:", error);
+        this.error = "Erro ao carregar dados.";
       } finally {
         this.loading = false;
       }

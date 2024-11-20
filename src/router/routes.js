@@ -23,6 +23,11 @@ const routes = [
       { path: 'medicos/novo', component: () => import('src/pages/medicos/NovoMedicoPage.vue') },
       { path: 'medicos/edit/:id', component: () => import('src/pages/medicos/NovoMedicoPage.vue'), props: true },
 
+      // Rotas de Equipamentos
+      { path: 'equipamentos', component: () => import('src/pages/equipamentos/EquipamentoPage.vue') },
+      { path: 'equipamentos/novo', component: () => import('src/pages/equipamentos/NovoEquipamentoPage.vue') },
+      { path: 'equipamentos/edit/:id', component: () => import('src/pages/equipamentos/NovoEquipamentoPage.vue'), props: true },
+
       // Rotas protegidas para Gerenciamento de Usuários
       {
         path: 'usuarios',

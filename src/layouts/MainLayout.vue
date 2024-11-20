@@ -34,14 +34,14 @@
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
-          <q-item-section v-if="!miniDrawer">Pacientes</q-item-section>
+          <q-item-section v-if="!miniDrawer">Gestão de Pacientes</q-item-section>
         </q-item>
 
         <q-item clickable v-ripple tag="router-link" to="/medicos" @click="closeDrawer">
           <q-item-section avatar>
             <q-icon name="local_hospital" />
           </q-item-section>
-          <q-item-section v-if="!miniDrawer">Médicos</q-item-section>
+          <q-item-section v-if="!miniDrawer">Gestão de Médicos</q-item-section>
         </q-item>
 
         <q-item clickable v-ripple>
@@ -58,7 +58,7 @@
           <q-item-section v-if="!miniDrawer">Gestão de Enfermeiros</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple>
+        <q-item clickable v-ripple to="/equipamentos" @click="closeDrawer">
           <q-item-section avatar>
             <q-icon name="build" />
           </q-item-section>
@@ -121,21 +121,21 @@
     </q-drawer>
 
     <q-dialog v-model="showProfileModal">
-      <q-card style="width: 400px; max-width: 90%; height: auto;">
-        <q-card-section>
-          <div class="text-h6 text-center">Perfil do Usuário</div>
-        </q-card-section>
-        <q-card-section class="q-gutter-md">
-          <q-input v-model="userName" label="Nome" dense readonly />
-          <q-input v-model="userSex" label="Sexo" dense readonly />
-          <q-input v-model="newPassword" label="Nova Senha" type="password" outlined dense />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="negative" @click="closeProfileModal" />
-          <q-btn flat label="Salvar" color="primary" @click="changePassword" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+  <q-card style="width: 400px; max-width: 90%; height: auto;">
+    <q-card-section>
+      <div class="text-h6 text-center">Perfil do Usuário</div>
+    </q-card-section>
+    <q-card-section class="q-gutter-md">
+      <q-input v-model="userName" label="Nome" dense readonly />
+      <q-input v-model="userEmail" label="Email" dense readonly />
+      <q-input v-model="newPassword" label="Nova Senha" type="password" outlined dense />
+    </q-card-section>
+    <q-card-actions class="actions-container">
+  <q-btn flat label="Salvar" color="primary" class="bg-primary text-white" @click="changePassword" />
+  <q-btn flat label="Cancelar" color="white" class="bg-negative text-white" @click="closeProfileModal" />
+</q-card-actions>
+  </q-card>
+</q-dialog>
 
     <!-- Conteúdo principal -->
     <q-page-container :style="contentStyle">
@@ -158,7 +158,7 @@ const route = useRoute();
 
 // Recupera informações do usuário logado
 const userName = ref(localStorage.getItem('loggedInUserName') || 'Usuário');
-const userSex = ref(localStorage.getItem('loggedInUserSex') || 'Não informado');
+const userEmail = ref(localStorage.getItem('loggedInUserEmail') || 'Não informado');
 const userPermission = ref(localStorage.getItem('loggedInUserPermission') || '');
 
 // Alterna entre mini e normal
@@ -193,6 +193,7 @@ const logout = () => {
   userPermission.value = '';
   router.push('/login');
 };
+
 
 // Atualiza o título do cabeçalho com base na rota atual
 const pageTitle = ref('');
@@ -232,6 +233,22 @@ const contentStyle = computed(() => ({
 .main-menu-content {
   flex: 1;
 }
+.actions-container {
+  display: flex; /* Alinha os itens em um layout flexível */
+  justify-content: space-between; /* Posiciona os botões em extremidades opostas */
+}
+
+.bg-primary {
+  background-color: #007bff; /* Cor de fundo para "Salvar" */
+  color: white;
+  border-radius: 4px;
+}
+
+.bg-negative {
+  background-color: #ff5252; /* Cor de fundo para "Cancelar" */
+  color: white;
+  border-radius: 4px;
+}
 
 .user-menu-content {
   border-top: 2px solid #ffffff;
@@ -239,19 +256,22 @@ const contentStyle = computed(() => ({
 
 .q-drawer a {
   color: #ffffff;
+  margin-right: 8px;
   border-radius: 0px 15px 15px 0px;
 }
 
 .q-drawer .q-item {
   color: #ffffff;
+  margin-right: 8px;
   border-radius: 0px 15px 15px 0px;
 }
 
 .q-drawer .q-item:hover {
   color: #FFBB56;
   background-color: black;
-  margin-right: 8px;
   border-radius: 0px 15px 15px 0px;
+  transition: background-color 0.5s ease;
+  transition: color 0.5s ease;
 }
 
 .q-item-section {

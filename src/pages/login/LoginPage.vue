@@ -33,12 +33,29 @@
           <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </q-form>
 
-      
+        <!-- Span de Ajuda -->
+        <div class="help-container">
+          <span class="help-text" @click="openHelpModal">Ajuda?</span>
+        </div>
       </q-card-section>
     </q-card>
+
+    <!-- Modal de Ajuda -->
+    <q-dialog v-model="isHelpModalOpen">
+  <q-card class="help-modal">
+    <q-card-section>
+      <h5>Precisa de ajuda?</h5>
+      <p>Entre em contato:</p>
+      <p><strong>Email:</strong> louis@kroc.com</p>
+      <p><strong>Número:</strong> (11) 99999-9999</p>
+    </q-card-section>
+    <q-card-actions align="center">
+      <q-btn flat label="Fechar" color="primary" @click="isHelpModalOpen = false" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </q-page>
 </template>
-
 
 <script setup>
 import { ref } from 'vue';
@@ -48,6 +65,7 @@ import axios from 'axios';
 const username = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const isHelpModalOpen = ref(false); // Controla o estado do modal
 const router = useRouter();
 
 const handleLogin = async () => {
@@ -62,11 +80,13 @@ const handleLogin = async () => {
     );
 
     if (user) {
-      // Salva o nome e a permissão no localStorage
+      // Salva o nome, e-mail e permissão no localStorage
       localStorage.setItem('loggedInUserName', user.Name);
+      localStorage.setItem('loggedInUserEmail', user.Email); // Adiciona o e-mail
       localStorage.setItem('loggedInUserPermission', user.Permissao);
 
-      console.log('Permissão salva:', user.Permissao); // Debug para verificar
+      console.log('E-mail salvo:', user.Email); // Debug para verificar
+      console.log('Permissão salva:', user.Permissao);
 
       // Redireciona para o dashboard
       router.push('/dashboard');
@@ -78,6 +98,10 @@ const handleLogin = async () => {
     console.error("Erro ao fazer login:", error);
     errorMessage.value = 'Erro ao fazer login. Tente novamente mais tarde.';
   }
+};
+
+const openHelpModal = () => {
+  isHelpModalOpen.value = true; // Abre o modal
 };
 </script>
 
@@ -108,7 +132,7 @@ const handleLogin = async () => {
 }
 
 .logo {
-  width: 250px;
+  width: 260px;
   margin-bottom: 20px;
   margin-top: 20px;
 }
@@ -116,16 +140,10 @@ const handleLogin = async () => {
 .input-styled {
   width: 57%;
   padding-left: 5px;
-  background-color: #285430;
-  border: 1px solid #ffffff;
+  background-color: #ffffff;
+  border: 1px solid #285430;
   border-radius: 3px;
   color: #ffffff;
-}
-
-.input-styled:hover,
-.input-styled:focus-within {
-  background-color: #ffffff;
-  color: #285430;
 }
 
 .error-message {
@@ -137,7 +155,7 @@ const handleLogin = async () => {
 .button-container {
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 60%;
 }
 
 .login-btn {
@@ -146,6 +164,26 @@ const handleLogin = async () => {
   background-color: #f0f0f0;
   color: #285430;
   border-radius: 3px;
+  text-align: center;
+}
+
+.help-container {
+  text-align: center;
+  margin-top: 47px;
+  margin-left: 33rem;
+}
+
+.help-text {
+  color: #ffffff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  font-style: italic; 
+}
+
+.help-modal {
+  max-width: 400px;
+  padding: 20px;
   text-align: center;
 }
 </style>
