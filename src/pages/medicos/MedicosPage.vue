@@ -1,34 +1,34 @@
 <template>
   <q-page>
     <q-card class="medicos-card">
-
+      <div class="header-title">Gerenciar Médicos</div>
 
       <q-card-section>
-  <div class="q-gutter-sm row items-center justify-between">
-    <q-input
-      outlined
-      dense
-      placeholder="Pesquisar"
-      v-model="search"
-      class="search-input"
-      prefix-icon="search"
-    />
+        <div class="q-gutter-sm row items-center justify-between">
+          <q-input
+            outlined
+            dense
+            placeholder="Pesquisar"
+            v-model="search"
+            class="search-input"
+            prefix-icon="search"
+          />
 
-    <q-btn
-      label="Novo Médico"
-      icon="add"
-      color="primary"
-      class="q-ml-md"
-      @click="addMedico"
-    />
-  </div>
-</q-card-section>
+          <q-btn
+            label="Novo Médico"
+            icon="add"
+            color="primary"
+            class="q-ml-md"
+            @click="addMedico"
+          />
+        </div>
+      </q-card-section>
 
-       <!-- Tabela de Médicos -->
-        <q-table
+      <!-- Tabela de Médicos -->
+      <q-table
         :rows="filteredMedicos"
         :columns="columns"
-        row-key="MedicoID"
+        row-key="id"
         flat
         dense
         class="medicos-table"
@@ -40,15 +40,18 @@
               color="negative"
               flat
               dense
-              @click="deleteMedico(props.row.MedicoID)"
+              @click="deleteMedico(props.row.id)"
             />
             <q-toggle
-              v-model="props.row.status"
+              v-model="props.row.Status"
               color="green"
               left-label
               label="Ativo"
               dense
               class="q-ml-md"
+              :true-value="'A'"
+              :false-value="'X'"
+              @update:model-value="(val) => updateStatus(props.row.id, val)"
             />
             <q-btn
               icon="edit"
@@ -80,7 +83,7 @@ const columns = [
   { name: 'CRM', label: 'CRM', align: 'left', field: 'CRM' },
   { name: 'MedicoTelefone', label: 'Telefone', align: 'left', field: 'MedicoTelefone' },
   { name: 'Especialidade', label: 'Especialidade ', align: 'left', field: 'Especialidade' },
-  { name: 'actions', label: 'Ações', align: 'center' }
+  { name: 'actions', label: 'Ações', align: 'center' },
 ];
 
 // Computed para filtrar os médicos com base na pesquisa
@@ -106,13 +109,27 @@ const deleteMedico = async (medicoID) => {
   try {
     await MedicosStore.deleteMedico(medicoID);
   } catch (error) {
-    console.error("Erro ao excluir médico:", error);
+    console.error('Erro ao excluir médico:', error);
+  }
+};
+
+// Função para atualizar o status do médico
+const updateStatus = async (id, newStatus) => {
+  try {
+    await MedicosStore.updateMedicoStatus(id, newStatus);
+    console.log(`Status do médico ${id} atualizado para ${newStatus}`);
+  } catch (error) {
+    console.error('Erro ao atualizar status do médico:', error);
   }
 };
 </script>
 
 <style scoped>
-
+.header-title {
+  font-size: 1.50rem;
+  margin-top: 5px;
+  margin-left: 10px;
+}
 
 .medicos-card {
   max-width: 1400px;

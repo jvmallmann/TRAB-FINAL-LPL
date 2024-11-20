@@ -2,6 +2,7 @@
 <template>
   <q-page>
     <q-card class="pacientes-card">
+        <div class="header-title">Gerenciar Pacientes</div>
       <q-card-section>
         <div class="q-gutter-sm row items-center justify-between">
           <q-input
@@ -130,5 +131,11 @@ const deletePaciente = async (pacienteID) => {
 
 .pacientes-table {
   min-width: 1080px;
+}
+
+.header-title {
+  font-size: 1.50rem;
+  margin-top: 5px;
+  margin-left: 10px;
 }
 </style>

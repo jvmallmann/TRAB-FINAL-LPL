@@ -33,15 +33,7 @@
           <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </q-form>
 
-        <!-- Botão de registro -->
-        <div class="button-container register-button">
-          <q-btn
-            flat
-            label="Registrar Usuário"
-            @click="goToRegister"
-            class="login-btn"
-          />
-        </div>
+      
       </q-card-section>
     </q-card>
   </q-page>

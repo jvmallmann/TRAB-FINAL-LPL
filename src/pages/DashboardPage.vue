@@ -1,52 +1,88 @@
-<!-- src/pages/DashboardPage.vue -->
 <template>
-    <q-layout view="lHh Lpr lFf">
-     
-
-      <!-- Conteúdo principal -->
-      <q-page-container>
-        <q-page class="q-pa-lg custom-page">
-          <!-- Spinner de carregamento -->
-          <q-spinner v-if="loading" size="30px" color="primary" />
-          <div v-if="error" class="text-negative">{{ error }}</div>
-
-          <!-- Cards principais -->
-          <div class="row q-gutter-md q-justify-center q-mt-md" v-if="!loading && !error">
-            <!-- Card de Pacientes -->
-            <q-card class="col-5 custom-card">
-              <q-card-section>
-                <div class="text-h6 card-title">Pacientes</div>
-                <q-separator class="q-mb-md" />
-                <div v-if="pacientes.length > 0">
-                  <q-item-label v-for="paciente in pacientes" :key="paciente.PacienteID">
-                    {{ paciente.PacienteNome || 'Nome não disponível' }}
-                  </q-item-label>
-                </div>
-                <div v-else>Nenhum dado disponível para pacientes.</div>
-              </q-card-section>
-            </q-card>
-
-            <!-- Card de Médicos -->
-            <q-card class="col-5 custom-card">
-              <q-card-section>
-                <div class="text-h6 card-title">Médicos</div>
-                <q-separator class="q-mb-md" />
-                <div v-if="medicos.length > 0">
-                  <q-item-label v-for="medico in medicos" :key="medico.id">
-                    {{ medico.MedicoNome || 'Nome não disponível' }}
-                  </q-item-label>
-                </div>
-                <div v-else>Nenhum dado disponível para médicos.</div>
-              </q-card-section>
-            </q-card>
+  <q-layout view="hHh Lpr lFf">
+    <!-- Conteúdo principal -->
+    <q-page-container>
+      <q-page class="q-pa-lg custom-page">
+        <div class="dashboard-grid">
+          <!-- Calendário -->
+          <div class=" calendar-card">
+            <EventCalendar :events="calendarEvents" />
           </div>
-        </q-page>
-      </q-page-container>
-    </q-layout>
+            <!-- Equipamentos com Defeitos -->
+            <div class="info-card">
+              <h3 class="info-card-title">Equipamentos com Defeitos</h3>
+              <ul>
+                <li class="info-card-item" v-for="equipamento in equipamentos" :key="equipamento.id">
+                  <span class="icon material-symbols-outlined">build</span>
+                  <div>
+                    <p>{{ equipamento.nome }}</p>
+                    <p class="text-sm">{{ equipamento.defeito }}</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          <!-- Médicos Ativos -->
+          <div class="info-card">
+            <h3 class="info-card-title">Médicos Ativos</h3>
+            <ul>
+              <li class="info-card-item" v-for="medico in medicos" :key="medico.id">
+                <img
+                  src="https://via.placeholder.com/30"
+                  alt="Médico"
+                  class="avatar"
+                />
+                <div>
+                  <p>{{ medico.especialidade }}</p>
+                  <p class="text-sm">{{ medico.nome }}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+           <!-- Pacientes Ativos -->
+           <div class="info-card">
+            <h3 class="info-card-title">Pacientes Ativos</h3>
+            <ul>
+              <li class="info-card-item" v-for="paciente in pacientes" :key="paciente.id">
+                <img
+                  src="https://via.placeholder.com/30"
+                  alt="Paciente"
+                  class="avatar"
+                />
+                <div>
+                  <p>{{ paciente.nome }}</p>
+                  <p class="text-sm">{{ paciente.idade }} anos</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Enfermeiros Ativos -->
+          <div class="info-card">
+            <h3 class="info-card-title">Enfermeiros Ativos</h3>
+            <ul>
+              <li class="info-card-item" v-for="enfermeiro in enfermeiros" :key="enfermeiro.id">
+                <img
+                  src="https://via.placeholder.com/30"
+                  alt="Enfermeiro"
+                  class="avatar"
+                />
+                <div>
+                  <p>{{ enfermeiro.area }}</p>
+                  <p class="text-sm">{{ enfermeiro.nome }}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup>
 import { onMounted, computed } from 'vue';
+import EventCalendar from 'src/components/Calendar.vue';
 import { useDashboardStore } from 'src/stores/dashboardStore';
 
 const store = useDashboardStore();
@@ -56,41 +92,64 @@ onMounted(() => {
 });
 
 // Computed properties para dados reativos
-const loading = computed(() => store.loading);
-const error = computed(() => store.error);
-const pacientes = computed(() => store.pacientes);
-const medicos = computed(() => store.medicos);
+const medicos = computed(() => store.medicos || []);
+const enfermeiros = computed(() => store.enfermeiros || []);
+const equipamentos = computed(() => store.equipamentos || []);
+const pacientes = computed(() => store.pacientes || []);
+const calendarEvents = computed(() => store.events || []);
 </script>
 
 <style scoped>
-/* Estilização personalizada para a dashboard */
-.custom-drawer {
-  background-color: #f7f7f7;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Define 3 colunas */
+  gap: 20px; /* Espaçamento entre os cards */
+  margin: 0 auto;
+  max-width: 1200px;
 }
 
-.custom-page {
-  background-color: #f0f0f0;
-}
-
-.custom-card {
+.info-card {
   background-color: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  margin: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 9px 9px 10px 10px;
+  border: 2px solid #285430;
 }
 
-.card-title {
-  color: #2c7c83;
-  font-weight: bold;
+.info-card-title {
+  background-color: #285430;
+  color: white;
   text-align: center;
+  border-radius: 10px 10px 0px 0px;
+  margin-top: -5px;
+  font-size: 1rem;
+  border: 1px solid #285430;
+
 }
 
-.q-drawer a {
-  color: #333;
+.info-card-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: #eef5ef;
+  border-radius: 4px;
+  margin-top: 8px;
 }
 
-.q-drawer a:hover {
-  color: #2c7c83;
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.icon {
+  font-size: 18px;
+  color: #285430;
+}
+
+.calendar-card {
+  grid-column: span 2;
+  border-radius: 9px 9px 10px 10px;
+  border: 2px solid #285430; /* Faz o calendário ocupar toda a largura (3 colunas) */
 }
 </style>
