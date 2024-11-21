@@ -28,6 +28,20 @@ const routes = [
       { path: 'equipamentos/novo', component: () => import('src/pages/equipamentos/NovoEquipamentoPage.vue') },
       { path: 'equipamentos/edit/:id', component: () => import('src/pages/equipamentos/NovoEquipamentoPage.vue'), props: true },
 
+      // Rotas de Permissões
+      {
+        path: 'permissoes',
+        component: () => import('src/pages/Permissions/PermissoesPage.vue'),
+        beforeEnter: (to, from, next) => {
+          const Permissao = localStorage.getItem('loggedInUserPermission');
+          if (Permissao === 'adm') {
+            next();
+          } else {
+            next('/access-denied'); // Redireciona para a página de acesso negado
+          }
+        },
+      },
+
       // Rotas protegidas para Gerenciamento de Usuários
       {
         path: 'usuarios',
@@ -53,7 +67,6 @@ const routes = [
           }
         },
       },
-
       // Página de acesso negado
       {
         path: 'access-denied',

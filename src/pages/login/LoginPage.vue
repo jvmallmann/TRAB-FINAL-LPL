@@ -144,12 +144,15 @@ const openHelpModal = () => {
   border: 1px solid #285430;
   border-radius: 3px;
   color: #ffffff;
+  box-shadow: 12px 12px 8px rgba(0, 0, 0, 0.3); /* Sombra */
+
 }
 
 .error-message {
   color: #ff5252;
   margin-top: 10px;
   text-align: center;
+  min-height: 20px; /* Adiciona altura fixa para evitar movimento */
 }
 
 .button-container {
@@ -165,6 +168,8 @@ const openHelpModal = () => {
   color: #285430;
   border-radius: 3px;
   text-align: center;
+  box-shadow: 12px 12px 8px rgba(0, 0, 0, 0.3); /* Sombra */
+
 }
 
 .help-container {

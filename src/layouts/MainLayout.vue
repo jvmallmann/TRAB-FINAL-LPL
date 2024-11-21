@@ -8,7 +8,8 @@
       show-if-above 
       :width="260"
       mini-to-overlay
-      style="background-color: #285430; display: flex; flex-direction: column;"
+      style="background-color: #285430; display: flex; flex-direction: column;   box-shadow: 11px 11px 15px rgba(0, 0, 0, 0.5); /* Sombra */
+;"
       class="custom-drawer"
     >
       <q-btn
@@ -79,13 +80,12 @@
           <q-item-section v-if="!miniDrawer">Relatórios</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple>
+        <q-item  v-if="userPermission === 'adm'" clickable v-ripple tag="router-link" to="/permissoes" @click="closeDrawer">
           <q-item-section avatar>
-            <q-icon name="settings" />
+            <q-icon name="verified_user" /> <!-- Ícone atualizado -->
           </q-item-section>
-          <q-item-section v-if="!miniDrawer">Configurações</q-item-section>
+          <q-item-section v-if="!miniDrawer">Permissões</q-item-section>
         </q-item>
-
         <!-- Gerenciamento de usuários visível apenas para admins -->
         <q-item
           v-if="userPermission === 'adm'"

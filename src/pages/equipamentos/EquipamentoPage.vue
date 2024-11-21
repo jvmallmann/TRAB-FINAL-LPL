@@ -32,6 +32,7 @@
         flat
         dense
         class="equipamentos-table"
+        v-model:pagination="pagination"
       >
         <template v-slot:body-cell-actions="props">
           <q-td align="center" style="white-space: nowrap;">
@@ -111,6 +112,13 @@ const updateStatus = async (id, newStatus) => {
     console.error('Erro ao atualizar status do equipamento:', error);
   }
 };
+
+const pagination = ref({
+  page: 1,         // Página inicial
+  rowsPerPage: 10, // Quantidade de registros por página
+  rowsNumber: 0,   // Quantidade total de registros (atualizado automaticamente)
+});          
+
 </script>
 
 <style scoped>

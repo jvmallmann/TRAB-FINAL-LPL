@@ -1,37 +1,44 @@
-// src/stores/usuariosStore.js
 import { defineStore } from 'pinia';
-import usuariosService from 'src/services/usuariosService';
+import usuariosService from 'src/services/usuarioService';
 
-export const useUsuariosStore = defineStore('usuarios', {
+export const useUsuariosStore = defineStore('usuariosStore', {
   state: () => ({
     usuarios: [],
-    loading: false,
-    error: null,
   }),
 
   actions: {
-    // Busca todos os usuários
+    // Obtém todos os usuários e atualiza o estado
     async fetchUsuarios() {
-      this.loading = true;
-      this.error = null;
       try {
-        this.usuarios = await usuariosService.getUsuarios();
+        const data = await usuariosService.getUsuarios();
+        console.log("Usuários carregados:", data); // Verifica os dados carregados
+        this.usuarios = data.map(user => ({
+          id: user.id,
+          Name: user.Name,
+          Email: user.Email,
+          Username: user.Username,
+          Permissao: user.Permissao
+        }));
       } catch (error) {
-        this.error = 'Erro ao carregar usuários.';
-        console.error(error);
-      } finally {
-        this.loading = false;
+        console.error("Erro ao buscar usuários no store:", error);
       }
     },
 
+    async fetchPermissions() {
+      try {
+        const data = await usuariosService.getPermissions();
+        this.permissions = data; // Atualiza o estado com as permissões
+      } catch (error) {
+        console.error('Erro ao buscar permissões no store:', error);
+      }
+    },
     // Adiciona um novo usuário
     async addUsuario(usuarioData) {
       try {
-        const newUser = await usuariosService.addUsuario(usuarioData);
-        this.usuarios.push(newUser);
+        await usuariosService.addUsuario(usuarioData);
+        await this.fetchUsuarios(); // Atualiza a lista após adicionar
       } catch (error) {
-        console.error('Erro ao adicionar usuário:', error);
-        throw error;
+        console.error('Erro ao adicionar usuário no store:', error);
       }
     },
 
@@ -39,24 +46,19 @@ export const useUsuariosStore = defineStore('usuarios', {
     async updateUsuario(id, usuarioData) {
       try {
         await usuariosService.updateUsuario(id, usuarioData);
-        const index = this.usuarios.findIndex((u) => u.id === id);
-        if (index !== -1) {
-          this.usuarios[index] = { ...this.usuarios[index], ...usuarioData };
-        }
+        await this.fetchUsuarios(); // Atualiza a lista após editar
       } catch (error) {
-        console.error('Erro ao atualizar usuário:', error);
-        throw error;
+        console.error('Erro ao atualizar usuário no store:', error);
       }
     },
 
-    // Exclui um usuário
+    // Remove um usuário
     async deleteUsuario(id) {
       try {
         await usuariosService.deleteUsuario(id);
-        this.usuarios = this.usuarios.filter((u) => u.id !== id);
+        await this.fetchUsuarios(); // Atualiza a lista após excluir
       } catch (error) {
-        console.error('Erro ao excluir usuário:', error);
-        throw error;
+        console.error('Erro ao excluir usuário no store:', error);
       }
     },
   },

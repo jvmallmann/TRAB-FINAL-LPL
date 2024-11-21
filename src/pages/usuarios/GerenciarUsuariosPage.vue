@@ -1,332 +1,269 @@
-  <template>
-    <q-page>
-      <q-card class="usuarios-card">
-        <q-card-section class="header-section">
-          <div class="header-title">Gerenciar Usuários</div>
-          <div class="header-buttons">
-            <q-btn
-              label="Novo Usuário"
-              icon="add"
-              color="primary"
-              @click="showUserModal = true"
-            />
-            <q-btn
-              label="Nova Permissão"
-              icon="lock"
-              style="background-color: #FFBB56;"
-              @click="showPermissionModal = true"
-            />
-          </div>
-        </q-card-section>
+<template>
+  <q-page>
+    <q-card class="usuarios-card">
+      <q-card-section class="header-section">
+        <div class="header-title">Gerenciar Usuários</div>
+        <div class="header-buttons">
+          <q-btn
+            label="Novo Usuário"
+            icon="add"
+            color="primary"
+            @click="showUserModal = true"
+          />
+        </div>
+      </q-card-section>
 
-        <q-card-section>
-          <q-table
-            :rows="usuarios"
-            :columns="columns"
-            row-key="id"
-            flat
-            dense
-            class="usuarios-table"
-          >
-            <template v-slot:body-cell-actions="props">
-              <q-td align="center">
-                <q-btn
+      <q-card-section>
+        <q-table
+          :rows="usuarios"
+          :columns="columns"
+          row-key="id"
+          flat
+          dense
+          class="usuarios-table"
+          v-model:pagination="pagination"
+        
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td align="center">
+              <q-btn
                   icon="edit"
                   color="primary"
                   dense
                   flat
-                  @click="openEditModal(props.row)"
+                  @click="openEditModal(props.row)" 
                 />
-                <q-btn
-                  icon="delete"
-                  color="negative"
-                  dense
-                  flat
-                  @click="deleteUsuario(props.row.id)"
-                />
-              </q-td>
-            </template>
-          </q-table>
+              <q-btn
+                icon="delete"
+                color="negative"
+                dense
+                flat
+                @click="deleteUsuario(props.row.id)"
+              />
+            </q-td>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+
+    <!-- Modal para criar novo usuário -->
+    <q-dialog v-model="showUserModal" persistent>
+      <q-card style="width: 500px; max-width: 90%; height: auto;">
+        <q-card-section>
+          <div class="text-h6 text-center">Cadastrar Novo Usuário</div>
+        </q-card-section>
+        <q-card-section>
+          <q-form @submit.prevent="submitUserForm" class="q-gutter-md">
+            <q-input v-model="newUser.name" label="Nome" outlined dense required />
+            <q-input v-model="newUser.email" label="Email" type="email" outlined dense required />
+            <q-input v-model="newUser.username" label="Usuário" outlined dense required />
+            <q-input v-model="newUser.password" label="Senha" type="password" outlined dense required />
+            <q-select v-model="newUser.permissao" :options="permissions" option-label="name"
+              option-value="name" label="Permissão" outlined dense required/>
+            <div class="button-container">
+              <q-btn label="Salvar" color="primary" type="submit" />
+              <q-btn label="Cancelar" flat color="negative" @click="closeUserModal" />
+            </div>
+          </q-form>
         </q-card-section>
       </q-card>
+    </q-dialog>
 
-      <!-- Modal para criar novo usuário -->
-      <q-dialog v-model="showUserModal" persistent>
-        <q-card style="width: 500px; max-width: 90%; height: auto;">
-          <q-card-section>
-            <div class="text-h6 text-center">Cadastrar Novo Usuário</div>
-          </q-card-section>
-          <q-card-section>
-            <q-form @submit.prevent="submitUserForm" class="q-gutter-md">
-              <q-input v-model="newUser.name" label="Nome" outlined dense required />
-              <q-input v-model="newUser.email" label="Email" type="email" outlined dense required />
-              <q-input v-model="newUser.username" label="Usuário" outlined dense required />
-              <q-input v-model="newUser.password" label="Senha" type="password" outlined dense required />
-              <q-select
-                v-model="newUser.permissao"
-                :options="['adm', 'medico', 'enfermeiro']"
-                label="Permissão"
-                outlined
-                dense
-                required
-              />
-              <div class="button-container">
-                <q-btn label="Salvar" color="primary" type="submit" />
-                <q-btn label="Cancelar" flat color="negative" @click="closeUserModal" />
-              </div>
-            </q-form>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
+    <!-- Modal para editar usuário -->
+    <q-dialog v-model="showEditModal" persistent>
+      <q-card style="width: 500px; max-width: 90%; height: auto;">
+        <q-card-section>
+          <div class="text-h6 text-center">Editar Usuário</div>
+        </q-card-section>
+        <q-card-section>
+          <q-form @submit.prevent="updateUsuario" class="q-gutter-md">
+            <q-input v-model="editUser.Name" label="Nome" outlined dense required />
+            <q-input v-model="editUser.Email" label="Email" type="email" outlined dense required />
+            <q-input v-model="editUser.Username" label="Usuário" outlined dense required />
+            <q-select
+              v-model="editUser.Permissao"
+              :options="permissions"
+              option-label="name"
+              option-value="name"
+              label="Permissão"
+              outlined
+              dense
+              required
+            />
+            <q-input
+              v-model="editUser.password"
+              label="Senha"
+              type="password"
+              outlined
+              dense
+            />
+            <div class="button-container">
+              <q-btn label="Salvar" color="primary" type="submit" />
+              <q-btn label="Cancelar" flat color="negative" @click="closeEditModal" />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
-      <!-- Modal para criar uma nova permissão -->
-      <q-dialog v-model="showPermissionModal" persistent>
-        <q-card style="width: 400px; max-width: 90%;">
-          <q-card-section>
-            <div class="text-h6 text-center">Criar Nova Permissão</div>
-          </q-card-section>
-          <q-card-section>
-            <q-form @submit.prevent="createPermission" class="q-gutter-md">
-              <q-input
-                v-model="newPermission"
-                label="Nome da Permissão"
-                outlined
-                dense
-                required
-              />
-              <div class="button-container">
-                <q-btn label="Salvar" color="primary" type="submit" />
-                <q-btn
-                  label="Cancelar"
-                  flat
-                  color="negative"
-                  @click="closePermissionModal"
-                />
-              </div>
-            </q-form>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
+  </q-page>
+</template>
 
-      <!-- Modal para editar usuário -->
-      <q-dialog v-model="showEditModal" persistent>
-  <q-card style="width: 500px; max-width: 90%; height: auto;">
-    <q-card-section>
-      <div class="text-h6 text-center">Editar Usuário</div>
-    </q-card-section>
-    <q-card-section>
-      <q-form @submit.prevent="updateUsuario" class="q-gutter-md">
-        <q-input
-          v-model="editUser.Name"
-          label="Nome"
-          outlined
-          dense
-          required
-        />
-        <q-input
-          v-model="editUser.Email"
-          label="Email"
-          type="email"
-          outlined
-          dense
-          required
-        />
-        <q-input
-          v-model="editUser.Username"
-          label="Usuário"
-          outlined
-          dense
-          required
-        />
-        <q-input
-          v-model="editUser.Permissao"
-          label="Permissão"
-          outlined
-          dense
-          required
-        />
-        <q-input
-          v-model="editUser.password"
-          label="Senha"
-          type="password"
-          outlined
-          dense
-        />
-        <div class="button-container">
-          <q-btn label="Salvar" color="primary" type="submit" />
-          <q-btn label="Cancelar" flat color="negative" @click="closeEditModal" />
-        </div>
-      </q-form>
-    </q-card-section>
-  </q-card>
-</q-dialog>
+<script setup>
+import { ref, onMounted, computed } from "vue";
+import { useUsuariosStore } from "src/stores/usuarioStore";
+import { usePermissionsStore } from "src/stores/permissionsStore";
 
-    </q-page>
-  </template>
+const usuariosStore = useUsuariosStore();
+const permissionsStore = usePermissionsStore();
 
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
+// Computed properties para obter os dados do store
+const usuarios = computed(() => usuariosStore.usuarios);
+const permissions = computed(() => permissionsStore.permissions);
 
-  const usuarios = ref([]);
-  const columns = [
-  { name: 'Name', label: 'Nome', align: 'left', field: 'Name' },
-  { name: 'Email', label: 'Email', align: 'left', field: 'Email' },
-  { name: 'Username', label: 'Usuário', align: 'left', field: 'Username' },
-  { name: 'Permissao', label: 'Permissão', align: 'left', field: 'Permissao' },
-  { name: 'actions', label: 'Ações', align: 'center' },
-];
-  // Modal de Novo Usuário
-  const showUserModal = ref(false);
-  const newUser = ref({ name: '', email: '', username: '', password: '', permissao: '' });
+const showUserModal = ref(false);
+const newUser = ref({
+  name: "",
+  email: "",
+  username: "",
+  permissao: "",
+});
 
-  const closeUserModal = () => {
+const closeUserModal = () => {
   showUserModal.value = false;
-  newUser.value = { name: '', email: '', username: '', password: '', permissao: '' };
+  newUser.value = { name: "", email: "", username: "", password: "", permissao: "" };
 };
 
-  // Modal para criar nova permissão
-  const showPermissionModal = ref(false);
-  const newPermission = ref('');
-  const createPermission = async () => {
-    if (!newPermission.value.trim()) {
-      alert('Por favor, insira o nome da permissão.');
-      return;
-    }
-    try {
-      alert(`Permissão "${newPermission.value}" criada com sucesso!`);
-      closePermissionModal();
-    } catch (error) {
-      console.error('Erro ao criar permissão:', error);
-    }
-  };
-  const closePermissionModal = () => {
-    showPermissionModal.value = false;
-    newPermission.value = '';
-  };
-
-  // Modal para editar usuário
-  const showEditModal = ref(false);
-  const editUser = ref({ id: null, name: '', email: '', username: '', password: '' });
-
-  const openEditModal = (user) => {
-  editUser.value = { ...user }; // Copia os dados do usuário selecionado
-  showEditModal.value = true;  // Abre o modal de edição
-  console.log("Usuário para edição:", editUser.value); // Verifica se os dados estão corretos
-};
-
-  const closeEditModal = () => {
-    showEditModal.value = false;
-  };
-
-
-  const updateUsuario = async () => {
+const submitUserForm = async () => {
   try {
-    await axios.put(`http://localhost:3000/usuarios/${editUser.value.id}`, editUser.value);
-    alert('Usuário atualizado com sucesso!');
-    closeEditModal();
-    fetchUsuarios(); // Atualiza os dados na tabela
-  } catch (error) {
-    console.error('Erro ao atualizar usuário:', error);
-  }
-};
-
-  const submitUserForm = async () => {
-  try {
-    // Ajustando os campos para o formato correto
-    const payload = {
+    await usuariosStore.addUsuario({
       Name: newUser.value.name,
       Email: newUser.value.email,
       Username: newUser.value.username,
-      Senha: newUser.value.password,
-      Permissao: newUser.value.permissao,
-    };
-
-    await axios.post('http://localhost:3000/usuarios', payload);
-    alert('Usuário cadastrado com sucesso!');
-    closeUserModal(); // Fecha o modal
-    await fetchUsuarios(); // Atualiza a lista
+      Permissao: newUser.value.permissao, // Aqui já será o valor do campo `name`
+    });
+    alert("Usuário cadastrado com sucesso!");
+    closeUserModal();
   } catch (error) {
-    console.error('Erro ao cadastrar usuário:', error);
+    console.error("Erro ao cadastrar usuário:", error);
   }
 };
 
-  const deleteUsuario = async (id) => {
-    try {
-      if (confirm('Tem certeza que deseja excluir este usuário?')) {
-        await axios.delete(`http://localhost:3000/usuarios/${id}`);
-        alert('Usuário excluído com sucesso!');
-        fetchUsuarios();
-      }
-    } catch (error) {
-      console.error('Erro ao excluir usuário:', error);
-    }
-  };
-
-  const fetchUsuarios = async () => {
+const updateUsuario = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/usuarios');
-    console.log('Dados retornados:', response.data);
-
-    // Padroniza os campos para corresponder às colunas do q-table
-    usuarios.value = response.data.map((user) => ({
-      id: user.id,
-      Name: user.Name || user.name,
-      Email: user.Email || user.email,
-      Username: user.Username || user.username,
-      Permissao: user.Permissao || user.permissao,
-    }));
+    await usuariosStore.updateUsuario(editUser.value.id, {
+      Name: editUser.value.Name,
+      Email: editUser.value.Email,
+      Username: editUser.value.Username,
+      Permissao: editUser.value.Permissao, // Apenas a string
+    });
+    alert("Usuário atualizado com sucesso!");
+    closeEditModal();
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
+    console.error("Erro ao atualizar usuário:", error);
   }
 };
 
 
-  onMounted(() => {
-    fetchUsuarios();
-  });
-  </script>
 
-  <style scoped>
-  .usuarios-card {
-    max-width: 1400px;
-    margin: auto;
-    margin-top: 20px;
-    border-top: 5px solid #285430;
-  }
 
-  .header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-  }
+const openEditModal = (user) => {
+  console.log("Abrindo modal para edição:", user); // Confirma o usuário selecionado
+  editUser.value = { ...user }; // Preenche os dados para edição
+  showEditModal.value = true; // Ativa o modal de edição
+  console.log("Estado do modal:", showEditModal.value); // Verifica o estado
+};
 
-  .header-title {
-    font-size: 1.50rem;
-    margin-top: 5px;
-  }
+const closeEditModal = () => {
+  showEditModal.value = false; // Fecha o modal de edição
+};
 
-  .header-buttons {
-    display: flex;
-    gap: 10px;
-  }
+// Confirma que showEditModal foi inicializado
+const showEditModal = ref(false);
 
-  .usuarios-table {
-    margin-top: 20px;
-  }
+// Declaração inicial de editUser
+const editUser = ref({
+  id: null,
+  Name: "",
+  Email: "",
+  Username: "",
+  Permissao: "",
+});
 
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
+// Chamada aos métodos dos stores no onMounted
+onMounted(() => {
+  usuariosStore.fetchUsuarios();
+  permissionsStore.fetchPermissions(); // Obtém as permissões usando o permissionsStore
+});
 
-  .q-dialog {
-    border-radius: 8px;
-  }
+const columns = [
+  { name: "Name", label: "Nome", align: "left", field: "Name" },
+  { name: "Email", label: "Email", align: "left", field: "Email" },
+  { name: "Username", label: "Usuário", align: "left", field: "Username" },
+  { 
+    name: "Permissao", 
+    label: "Permissão", 
+    align: "left", 
+    field: (row) => row.Permissao?.name || "Sem Permissão" // Acessa o campo `name` ou exibe "Sem Permissão"
+  },
+  {
+    name: "actions",
+    label: "Ações",
+    align: "center",
+    field: "actions",
+    sortable: false,
+  },
+];
 
-  .q-btn {
-    font-size: 0.9rem;
-  }
-  </style>
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 0,
+});
+</script>
+
+
+<style scoped>
+
+.usuarios-card {
+  max-width: 1400px;
+  margin: auto;
+  margin-top: 20px;
+  border-top: 5px solid #285430;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.header-title {
+  font-size: 1.50rem;
+  margin-top: 5px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.usuarios-table {
+  margin-top: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.q-dialog {
+  border-radius: 8px;
+}
+
+.q-btn {
+  font-size: 0.9rem;
+}
+</style>
