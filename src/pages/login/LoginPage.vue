@@ -24,39 +24,36 @@
             style="margin-top: 10px;"
           />
           <div class="button-container">
-            <q-btn
-              type="submit"
-              label="Login"
-              class="login-btn"
-            />
+            <q-btn type="submit" label="Login" class="login-btn" />
           </div>
         </q-form>
-        <div
-  class="help-container"
-  :style="errorMessage ? 'margin-top: 20px;' : 'margin-top: 47px;'"
->
-  <span class="help-text" @click="openHelpModal">Ajuda?</span>
-</div>
+
+        <!-- Mensagem de erro -->
+        <div class="error-message">{{ errorMessage }}</div>
+
+        <!-- Span de Ajuda -->
+        <div class="help-container">
+          <span class="help-text" @click="openHelpModal">Ajuda?</span>
+        </div>
       </q-card-section>
     </q-card>
 
     <!-- Modal de Ajuda -->
     <q-dialog v-model="isHelpModalOpen">
-  <q-card class="help-modal">
-    <q-card-section>
-      <h5>Precisa de ajuda?</h5>
-      <p>Entre em contato:</p>
-      <p><strong>Email:</strong> louis@kroc.com</p>
-      <p><strong>Número:</strong> (11) 99999-9999</p>
-    </q-card-section>
-    <q-card-actions align="center">
-      <q-btn flat label="Fechar" color="primary" @click="isHelpModalOpen = false" />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
+      <q-card class="help-modal">
+        <q-card-section>
+          <h5>Precisa de ajuda?</h5>
+          <p>Entre em contato:</p>
+          <p><strong>Email:</strong> louis@kroc.com</p>
+          <p><strong>Número:</strong> (11) 99999-9999</p>
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn flat label="Fechar" color="primary" @click="isHelpModalOpen = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -152,7 +149,12 @@ const openHelpModal = () => {
   color: #ff5252;
   margin-top: 10px;
   text-align: center;
-  min-height: 20px; /* Adiciona altura fixa para evitar movimento */
+  min-height: 20px; /* Define altura fixa para evitar deslocamento */
+  visibility: hidden; /* Esconde a mensagem quando está vazia */
+}
+
+.error-message:not(:empty) {
+  visibility: visible; /* Mostra a mensagem apenas quando tiver conteúdo */
 }
 
 .button-container {

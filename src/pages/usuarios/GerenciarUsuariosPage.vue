@@ -140,6 +140,7 @@ const submitUserForm = async () => {
       Name: newUser.value.name,
       Email: newUser.value.email,
       Username: newUser.value.username,
+      Senha: newUser.value.password,
       Permissao: newUser.value.permissao, // Aqui já será o valor do campo `name`
     });
     alert("Usuário cadastrado com sucesso!");
@@ -155,6 +156,7 @@ const updateUsuario = async () => {
       Name: editUser.value.Name,
       Email: editUser.value.Email,
       Username: editUser.value.Username,
+      Senha: editUser.value.password,
       Permissao: editUser.value.Permissao, // Apenas a string
     });
     alert("Usuário atualizado com sucesso!");

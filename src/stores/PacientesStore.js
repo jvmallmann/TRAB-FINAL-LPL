@@ -1,4 +1,3 @@
-// src/stores/pacientesStore.js
 import { defineStore } from 'pinia';
 import pacientesService from 'src/services/pacientesService';
 
@@ -50,6 +49,17 @@ export const usePacientesStore = defineStore('pacientes', {
         console.error("Erro ao adicionar paciente:", error);
         throw error;
       }
-    }
-  }
+    },
+
+    // Adicionando o método deletePaciente
+    async deletePaciente(id) {
+      try {
+        await pacientesService.deletePaciente(id);
+        this.pacientes = this.pacientes.filter(paciente => paciente.id !== id);
+      } catch (error) {
+        console.error("Erro ao excluir paciente:", error);
+        throw error;
+      }
+    },
+  },
 });

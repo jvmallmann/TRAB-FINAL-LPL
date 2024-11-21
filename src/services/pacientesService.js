@@ -1,4 +1,3 @@
-// src/services/pacientesService.js
 import { api } from 'src/boot/axios';
 
 const pacientesService = {
@@ -38,7 +37,17 @@ const pacientesService = {
       console.error("Erro ao adicionar paciente:", error);
       throw error;
     }
-  }
+  },
+
+  // Adicionando o método deletePaciente
+  async deletePaciente(id) {
+    try {
+      await api.delete(`/pacientes/${id}`);
+    } catch (error) {
+      console.error("Erro ao excluir paciente:", error);
+      throw error;
+    }
+  },
 };
 
 export default pacientesService;
