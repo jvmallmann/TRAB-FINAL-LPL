@@ -43,14 +43,6 @@
               dense
               @click="deletePaciente(props.row.id)"
             />
-            <q-toggle
-              v-model="props.row.status"
-              color="green"
-              left-label
-              label="Ativo"
-              dense
-              class="q-ml-md"
-            />
             <q-btn
               icon="edit"
               color="primary"

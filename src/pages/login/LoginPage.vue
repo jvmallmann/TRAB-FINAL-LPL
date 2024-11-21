@@ -30,13 +30,13 @@
               class="login-btn"
             />
           </div>
-          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </q-form>
-
-        <!-- Span de Ajuda -->
-        <div class="help-container">
-          <span class="help-text" @click="openHelpModal">Ajuda?</span>
-        </div>
+        <div
+  class="help-container"
+  :style="errorMessage ? 'margin-top: 20px;' : 'margin-top: 47px;'"
+>
+  <span class="help-text" @click="openHelpModal">Ajuda?</span>
+</div>
       </q-card-section>
     </q-card>
 
@@ -83,7 +83,7 @@ const handleLogin = async () => {
       // Salva o nome, e-mail e permissão no localStorage
       localStorage.setItem('loggedInUserName', user.Name);
       localStorage.setItem('loggedInUserEmail', user.Email); // Adiciona o e-mail
-      localStorage.setItem('loggedInUserPermission', user.Permissao);
+      localStorage.setItem('loggedInUserPermission', user.Permissao.name);
 
       console.log('E-mail salvo:', user.Email); // Debug para verificar
       console.log('Permissão salva:', user.Permissao);
@@ -174,8 +174,6 @@ const openHelpModal = () => {
 
 .help-container {
   text-align: center;
-  margin-top: 47px;
-  margin-left: 33rem;
 }
 
 .help-text {

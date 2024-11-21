@@ -34,7 +34,7 @@ const routes = [
         component: () => import('src/pages/Permissions/PermissoesPage.vue'),
         beforeEnter: (to, from, next) => {
           const Permissao = localStorage.getItem('loggedInUserPermission');
-          if (Permissao === 'adm') {
+          if (Permissao === 'Admin') {
             next();
           } else {
             next('/access-denied'); // Redireciona para a página de acesso negado
@@ -48,7 +48,7 @@ const routes = [
         component: () => import('src/pages/usuarios/GerenciarUsuariosPage.vue'),
         beforeEnter: (to, from, next) => {
           const Permissao = localStorage.getItem('loggedInUserPermission');
-          if (Permissao === 'adm') {
+          if (Permissao === 'Admin') {
             next();
           } else {
             next('/access-denied'); // Redireciona para a página de acesso negado
@@ -60,7 +60,7 @@ const routes = [
         component: () => import('src/pages/usuarios/NovoUsuarioPage.vue'),
         beforeEnter: (to, from, next) => {
           const Permissao = localStorage.getItem('loggedInUserPermission');
-          if (Permissao === 'adm') {
+          if (Permissao === 'Admin') {
             next();
           } else {
             next('/access-denied'); // Redireciona para a página de acesso negado

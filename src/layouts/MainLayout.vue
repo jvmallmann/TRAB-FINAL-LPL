@@ -80,7 +80,7 @@
           <q-item-section v-if="!miniDrawer">Relatórios</q-item-section>
         </q-item>
 
-        <q-item  v-if="userPermission === 'adm'" clickable v-ripple tag="router-link" to="/permissoes" @click="closeDrawer">
+        <q-item  v-if="userPermission === 'Admin'" clickable v-ripple tag="router-link" to="/permissoes" @click="closeDrawer">
           <q-item-section avatar>
             <q-icon name="verified_user" /> <!-- Ícone atualizado -->
           </q-item-section>
@@ -88,7 +88,7 @@
         </q-item>
         <!-- Gerenciamento de usuários visível apenas para admins -->
         <q-item
-          v-if="userPermission === 'adm'"
+          v-if="userPermission === 'Admin'"
           clickable
           v-ripple
           tag="router-link"
